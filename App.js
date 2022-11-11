@@ -1,20 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from "react-redux";
+import { store } from "./store";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import RootNavigation from "./navigation/RootNavigation";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <StripeProvider
+        publishableKey="pk_test_51M0R05KwAWaCzg2GvgUIIZOCksgA1ZNqBDGvSy8lBZirEXji3vNxdxkYmSsCjhHWwNdHdi67O3i7ayDDdFBQz5Ec00UurgqM39"
+        merchantIdentifier="merchant.com"
+      >
+        <RootNavigation />
+      </StripeProvider>
+
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
