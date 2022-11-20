@@ -7,6 +7,7 @@ import PreparingOrderScreen from "../screens/PreparingOrderScreen";
 import PaymentScreen from "../screens/PaymentScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import OrdersScreen from "../screens/OrdersScreen";
+import ManageBusinessScreen from "../screens/ManageBusinessScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,11 @@ const AuthStack = () => {
         name="Orders"
         component={OrdersScreen}
         options={{ presentation: "modal", headerShown: false }}
+      />
+      <Stack.Screen
+        name="ManageBusiness"
+        component={ManageBusinessScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

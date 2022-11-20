@@ -35,15 +35,15 @@ const OrdersScreen = () => {
             });
     }, [])
     const renderItem = ({ item }) => (
-        // flex-row items-center space-x-4 px-4 py-3
         <View className="flex-row justify-between items-end bg-white m-2 rounded-lg shadow-lg p-4">
-            {/* <AtSymbolIcon size={35} color="#00CCBB" /> */}
-
             <View>
-                <Text className="text-lg text-[#00CCBB] font-bold">{item.businessTitle}</Text>
-                <Text className="text-lg ">{format(new Date(item.createdAt), "hh:mm dd MMMM yy")}</Text>
+                <View>
+                    <Text className="text-lg text-[#00CCBB] font-bold">{item.businessTitle}</Text>
+                    <Text className="text-lg ">{format(new Date(item.createdAt), "hh:mm dd MMMM yy")}</Text>
+                </View>
+                <Text className="text-lg font-bold">$ {item.total}</Text>
             </View>
-            <Text className="text-lg font-bold">$ {item.total}</Text>
+            {/* <Text className="text-lg font-bold">$ {item.businessTitle}</Text> */}
         </View>
 
     );

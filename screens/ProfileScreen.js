@@ -49,6 +49,17 @@ const ProfileScreen = () => {
                         <Text onPress={() => navigation.navigate("Orders")} className="text-[#00CCBB]">Revisar</Text>
                     </TouchableOpacity>
                 </View>
+                <View className="flex-row items-center space-x-4 px-4 py-3 bg-white my-1">
+                    <ArchiveBoxIcon size={35} color="#00CCBB" />
+                    <Text className="flex-1 text-lg ">Negocio</Text>
+
+                    <TouchableOpacity>
+                        <Text onPress={() => {
+                            navigation.goBack()
+                            navigation.navigate("ManageBusiness")
+                        }} className="text-[#00CCBB]">Administrar</Text>
+                    </TouchableOpacity>
+                </View>
 
             </View>
 
