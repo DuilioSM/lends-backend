@@ -49,6 +49,7 @@ const ManageBusinessScreen = () => {
         id: "",
         url: ""
     })
+    const userInfo = useSelector(selectUser);
     const [galleryPermission, setGalleryPermission] = useState(null);
     const [image, setImage] = useState(null);
     const token = useSelector(getToken)
@@ -111,7 +112,7 @@ const ManageBusinessScreen = () => {
         validationSchema: Yup.object(validationSchema()),
         validateOnChange: false,
         onSubmit: (data) => {
-            business_create(data, token).then((result) => {
+            business_create({ ...data, business_image, _user: userInfo._id }, token).then((result) => {
                 if (result.status === 201) {
                     Alert.alert("El negocio ha sido actualizado")
                     navigation.goBack()
@@ -128,7 +129,8 @@ const ManageBusinessScreen = () => {
                 <View className="relative">
                     <Image
                         source={{
-                            uri: 'https://www.hogarmania.com/archivos/201904/herramientas-de-bricolaje-848x477x80xX.jpg'
+                            // uri: 'https://www.hogarmania.com/archivos/201904/herramientas-de-bricolaje-848x477x80xX.jpg'
+                            uri: business_image.url
                         }}
                         className="w-full h-56 bg-gray-300 p-4"
                     />
