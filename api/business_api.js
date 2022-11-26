@@ -1,5 +1,35 @@
 import ApiManager from "./ApiManager";
 
+export const business_getAll = async (token) => {
+    try {
+        const result = await ApiManager(`/business`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+export const business_getById = async (business, token) => {
+    try {
+        const result = await ApiManager(`/business?_id=${business}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
 export const business_create = async (data, token) => {
     try {
         const result = await ApiManager("/business", {
@@ -19,18 +49,21 @@ export const business_create = async (data, token) => {
     }
 };
 
-// export const orders_getAll = async (token, customer) => {
-//     try {
-//         // `/orders?customer=${customer}`
-//         const result = await ApiManager(`/orders?customer=635bf9778bacf4021c9b873a`, {
-//             method: "GET",
-//             headers: {
-//                 "content-type": "application/json",
-//                 "Authorization": token
-//             }
-//         });
-//         return result;
-//     } catch (error) {
-//         return error.response.data;
-//     }
-// };
+export const business_update = async (data, business, token) => {
+    try {
+        const result = await ApiManager(`/business?_id=${business}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            },
+            data: {
+                ...data,
+                strategy: "local",
+            },
+        });
+        return result;
+    } catch (error) {
+        return console.log(error);
+    }
+};

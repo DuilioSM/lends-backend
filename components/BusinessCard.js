@@ -37,7 +37,7 @@ const BusinessCard = ({
     >
       <Image
         source={{
-          uri: urlFor(imgUrl).url(),
+          uri: imgUrl
         }}
         className="h-36 w-64 rounded-sm"
       />

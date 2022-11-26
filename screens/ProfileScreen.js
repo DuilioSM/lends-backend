@@ -5,7 +5,7 @@ import {
     SafeAreaView,
     TouchableOpacity,
 } from "react-native";
-import { XCircleIcon, UserIcon, AtSymbolIcon, ArchiveBoxIcon } from "react-native-heroicons/solid";
+import { XCircleIcon, UserIcon, AtSymbolIcon, ArchiveBoxIcon, BuildingStorefrontIcon } from "react-native-heroicons/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { removeToken, selectUser } from "../features/authSlice";
 
@@ -14,7 +14,6 @@ const ProfileScreen = () => {
     const navigation = useNavigation();
     const userInfo = useSelector(selectUser);
     const dispatch = useDispatch();
-
     return (
         <SafeAreaView className="flex-1 bg-gray-100 justify-between">
             <View className="flex-2 bg-gray-100">
@@ -32,10 +31,6 @@ const ProfileScreen = () => {
                 <View className="flex-row items-center space-x-4 px-4 py-3 bg-white mb-1 mt-2">
                     <UserIcon size={35} color="#00CCBB" />
                     <Text className="flex-1 text-lg font-semibold">{userInfo.fullname}</Text>
-
-                    {/* <TouchableOpacity>
-                        <Text className="text-[#00CCBB]">Cambiar</Text>
-                    </TouchableOpacity> */}
                 </View>
                 <View className="flex-row items-center space-x-4 px-4 py-3 bg-white my-1">
                     <AtSymbolIcon size={35} color="#00CCBB" />
@@ -50,14 +45,23 @@ const ProfileScreen = () => {
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row items-center space-x-4 px-4 py-3 bg-white my-1">
-                    <ArchiveBoxIcon size={35} color="#00CCBB" />
+                    <BuildingStorefrontIcon size={35} color="#00CCBB" />
                     <Text className="flex-1 text-lg ">Negocio</Text>
 
                     <TouchableOpacity>
-                        <Text onPress={() => {
-                            navigation.goBack()
-                            navigation.navigate("ManageBusiness")
-                        }} className="text-[#00CCBB]">Administrar</Text>
+                        {
+                            userInfo.business ?
+                                (<Text onPress={() => {
+                                    navigation.goBack()
+                                    navigation.navigate("ManageBusiness")
+                                }} className="text-[#00CCBB]">Administrar</Text>) :
+                                (
+                                    <Text onPress={() => {
+                                        navigation.goBack()
+                                        navigation.navigate("CreateBusiness")
+                                    }} className="text-[#00CCBB]">Crear negocio</Text>
+                                )
+                        }
                     </TouchableOpacity>
                 </View>
 

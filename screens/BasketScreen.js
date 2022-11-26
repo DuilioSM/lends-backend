@@ -149,12 +149,13 @@ const BasketScreen = () => {
           >
             <Text className="text-[#00CCBB]">{items.length} x</Text>
             <Image
-              source={{ uri: urlFor(items[0]?.image).url() }}
+              source={{ uri: items[0]?.url }}
+              // source={{ uri: urlFor(items[0]?.image).url() }}
               className="h-12 w-12 rounded-full"
             />
             <Text className="flex-1">{items[0]?.name}</Text>
             <Text>
-              <Currency quantity={items[0]?.price} currency="MXN" />
+              <Currency quantity={items[0]?.rental_price} currency="MXN" />
             </Text>
             <TouchableOpacity>
               <Text

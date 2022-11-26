@@ -23,10 +23,29 @@ export const user_register = async (data) => {
     const result = await ApiManager("/users", {
       method: "POST",
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/json"
       },
       data: {
         ...data,
+        strategy: "local",
+      },
+    });
+    return result;
+  } catch (error) {
+    return error.response.data;
+  }
+};
+
+export const user_add_business = async (business, user, token) => {
+  try {
+    const result = await ApiManager(`/users?_id=${user}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": token
+      },
+      data: {
+        business,
         strategy: "local",
       },
     });

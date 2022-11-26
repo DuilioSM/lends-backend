@@ -10,13 +10,13 @@ import {
   removeFromBasket,
 } from "../features/basketSlice";
 
-const ArticleRow = ({ id, name, description, price, image }) => {
+const ArticleRow = ({ id, name, description, rental_price, url }) => {
   const [isPressed, setIsPressed] = useState(false);
   const items = useSelector((state) => selectBasketItemsWithId(state, id));
   const dispatch = useDispatch();
 
   const addItemToBasket = () => {
-    dispatch(addToBasket({ id, name, description, price, image }));
+    dispatch(addToBasket({ id, name, description, rental_price, url }));
   };
 
   const removeItemFromBasket = () => {
@@ -28,16 +28,15 @@ const ArticleRow = ({ id, name, description, price, image }) => {
     <>
       <TouchableOpacity
         onPress={() => setIsPressed(!isPressed)}
-        className={`bg-white border p-4 border-gray-200 ${
-          isPressed && "border-b-0"
-        }`}
+        className={`bg-white border p-4 border-gray-200 ${isPressed && "border-b-0"
+          }`}
       >
         <View className="flex-row">
           <View className="flex-1 pr-2">
             <Text className="text-xl mb-1">{name}</Text>
             <Text className="text-gray-400">{description}</Text>
             <Text className="text-gray-400 mt-2">
-              <Currency currency="MXN" quantity={price} />
+              <Currency currency="MXN" quantity={rental_price} />
             </Text>
           </View>
           <View className="">
@@ -46,7 +45,8 @@ const ArticleRow = ({ id, name, description, price, image }) => {
                 borderWidth: 1,
                 borderColor: "#F3F3F4",
               }}
-              source={{ uri: urlFor(image).url() }}
+              // source={{ uri: urlFor(image).url() }}
+              source={{ uri: url }}
               className="h-20 w-20 bg-gray-300 p-4 "
             />
           </View>

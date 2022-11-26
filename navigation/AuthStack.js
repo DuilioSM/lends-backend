@@ -8,6 +8,10 @@ import PaymentScreen from "../screens/PaymentScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import OrdersScreen from "../screens/OrdersScreen";
 import ManageBusinessScreen from "../screens/ManageBusinessScreen";
+import ManageProductsScreen from "../screens/ManageProductsScreen";
+import ProductScreen from "../screens/ProductScreen";
+import CreateBusinessScreen from "../screens/CreateBusinessScreen";
+import ManageOrdersScreen from "../screens/ManageOrdersScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +54,28 @@ const AuthStack = () => {
         name="ManageBusiness"
         component={ManageBusinessScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateBusiness"
+        component={CreateBusinessScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ManageProducts"
+        component={ManageProductsScreen}
+        options={{ title: "Mi catálogo", headerBackTitle: "Volver" }}
+      // options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ManageOrders"
+        component={ManageOrdersScreen}
+        options={{ title: "Solicitudes de ordenes", headerBackTitle: "Volver" }}
+      // options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Product"
+        component={ProductScreen}
+        options={{ presentation: "modal", headerShown: false }}
       />
     </Stack.Navigator>
   );

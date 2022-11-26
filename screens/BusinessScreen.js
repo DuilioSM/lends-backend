@@ -11,12 +11,17 @@ import {
 import { urlFor } from "../sanity";
 import ArticleRow from "../components/ArticleRow";
 import BasketIcon from "../components/BasketIcon";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setBusiness } from "../features/businessSlice";
+import { useState } from "react";
+import { product_by_business } from "../api/product_api";
+import { getToken } from "../features/authSlice";
 
 const BusinessScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [articles, setArticles] = useState([])
+  const token = useSelector(getToken);
 
   const {
     params: {
@@ -27,7 +32,7 @@ const BusinessScreen = () => {
       genre,
       address,
       short_description,
-      articles,
+      // articles,
       long,
       lat,
     },
@@ -43,12 +48,26 @@ const BusinessScreen = () => {
         genre,
         address,
         short_description,
-        articles,
+        // articles,
         long,
         lat,
       })
     );
   }, []);
+
+  useEffect(() => {
+    console.log(id)
+    product_by_business(token, id)
+      .then((result) => {
+        if (result.status === 200) {
+          setArticles(result.data.data)
+          console.log(result.data.data)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -62,7 +81,8 @@ const BusinessScreen = () => {
         <View className="relative">
           <Image
             source={{
-              uri: urlFor(imgUrl).url(),
+              // uri: urlFor(imgUrl).url(),
+              uri: imgUrl,
             }}
             className="w-full h-56 bg-gray-300 p-4"
           />
@@ -111,8 +131,8 @@ const BusinessScreen = () => {
               id={article._id}
               name={article.name}
               description={article.short_description}
-              price={article.price}
-              image={article.image}
+              rental_price={article.rental_price}
+              url={article.product_image.url}
             />
           ))}
         </View>

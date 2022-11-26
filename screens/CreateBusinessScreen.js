@@ -3,16 +3,33 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from "react-redux";
 import CryptoJS from 'crypto-js';
-import { ArrowLeftIcon, CameraIcon, ShoppingBagIcon, TruckIcon } from 'react-native-heroicons/outline';
+import { ArrowLeftIcon, CameraIcon, ShoppingBagIcon } from 'react-native-heroicons/outline';
 import * as ImagePicker from 'expo-image-picker';
-import { getToken, selectUserBusiness } from '../features/authSlice';
+import { getToken } from '../features/authSlice';
 import { upload_image } from '../api/upload_api';
-import { business_update } from '../api/business_api';
+import { business_create } from '../api/business_api';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { selectUser } from "../features/authSlice";
 import { user_add_business } from '../api/user_api';
 
+
+function initialValues() {
+    return {
+        _user: "",
+        name: "",
+        short_description: "",
+        business_image: {
+            id: "",
+            url: ""
+        },
+        lat: null,
+        long: null,
+        direction: "",
+        rating: "",
+        categorie: "",
+    };
+}
 function validationSchema() {
     return {
         name: Yup.string().required("El nombre del negocio es obligatorio"),
@@ -26,7 +43,7 @@ function validationSchema() {
     };
 }
 
-const ManageBusinessScreen = () => {
+const CreateBusinessScreen = () => {
     const [business_image, setBusiness_image] = useState({
         id: "",
         url: ""
@@ -35,15 +52,14 @@ const ManageBusinessScreen = () => {
     const [galleryPermission, setGalleryPermission] = useState(null);
     const [image, setImage] = useState(null);
     const token = useSelector(getToken);
-    const userBusiness = useSelector(selectUserBusiness)
 
     const navigation = useNavigation();
+
 
     useEffect(() => {
         (async () => {
             const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync()
             setGalleryPermission(galleryStatus.status === 'granted')
-            setBusiness_image(userBusiness.business_image)
         })();
     }, []);
 
@@ -107,15 +123,25 @@ const ManageBusinessScreen = () => {
     // });
 
     const formik = useFormik({
-        initialValues: userBusiness,
+        initialValues: initialValues(),
         validationSchema: Yup.object(validationSchema()),
         validateOnChange: false,
         onSubmit: (data) => {
-            business_update({ ...data, business_image }, userBusiness._id, token)
+            business_create({ ...data, business_image, _user: userInfo._id }, token)
                 .then((result) => {
-                    if (result.status === 200) {
-                        console.log(result)
-                        Alert.alert("El negocio ha sido actualizado")
+                    if (result.status === 201) {
+                        user_add_business(result.data._id, result.data._user, token)
+                            .then((result) => {
+                                if (result.status === 200) {
+                                    Alert.alert("Felicidades el negocio ha sido creado!", "Para ver cambios por favor vuelve a iniciar sesión")
+                                    navigation.goBack()
+                                }
+                            }
+                            ).catch((err) => {
+                                Alert.alert(err)
+                                console.log(err);
+                            });
+                        // Alert.alert("El negocio ha sido actualizado")
                         // navigation.goBack()
                     }
                 })
@@ -124,16 +150,23 @@ const ManageBusinessScreen = () => {
                 });
         }
     });
+
     return (
         <>
             <ScrollView>
                 <View className="relative">
-                    <Image
-                        source={{
-                            uri: business_image.url
-                        }}
-                        className="w-full h-56 bg-gray-300 p-4"
-                    />
+                    {
+                        business_image.url ?
+                            <Image
+                                source={{ uri: business_image.url }}
+                                className="w-full h-56 bg-gray-300 p-4"
+                            /> :
+                            <Image
+                                source={{ uri: 'https://res.cloudinary.com/dlxr7cwuy/image/upload/v1669443800/notSelected_lrt0pc.gif' }}
+                                className="w-full h-56 bg-gray-300 p-4"
+                            />
+                    }
+
                     <TouchableOpacity
                         onPress={navigation.goBack}
                         className="absolute top-14 left-5 p-2 bg-gray-100 rounded-full"
@@ -158,16 +191,8 @@ const ManageBusinessScreen = () => {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <View className="bg-white">
-                    <TouchableOpacity onPress={() => navigation.navigate("ManageProducts")} className="flex-row  items-center space-x-2 p-4 border-y border-gray-300">
-                        <TruckIcon color="gray" opacity={0.6} size={30} />
-                        <Text className="pl-2 flex-1 text-md font-bold">
-                            Solicitudes de pedidos
-                        </Text>
-                    </TouchableOpacity>
-                </View>
 
-                <View className=" mx-4 mb-8 space-y-2">
+                <View className=" mx-4 space-y-2">
                     <View className="">
                         <Text>{formik.errors.name}</Text>
                         <TextInput
@@ -191,7 +216,7 @@ const ManageBusinessScreen = () => {
                         <Text>{formik.errors.lat}</Text>
                         <TextInput
                             placeholder="Latitud del negocio"
-                            value={JSON.stringify(formik.values.lat)}
+                            value={formik.values.lat}
                             keyboardType="decimal-pad"
                             onChangeText={(text) => formik.setFieldValue("lat", text)}
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
@@ -202,7 +227,7 @@ const ManageBusinessScreen = () => {
                         <Text>{formik.errors.long}</Text>
                         <TextInput
                             placeholder="Longitud del negocio"
-                            value={JSON.stringify(formik.values.long)}
+                            value={formik.values.long}
                             keyboardType="decimal-pad"
                             onChangeText={(text) => formik.setFieldValue("long", text)}
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]"
@@ -235,13 +260,13 @@ const ManageBusinessScreen = () => {
                         <Text>{formik.errors.rating}</Text>
                         <TextInput
                             placeholder="Rating de google Maps"
-                            value={JSON.stringify(formik.values.rating)}
+                            value={formik.values.rating}
                             onChangeText={(text) => formik.setFieldValue("rating", text)}
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
                         />
                     </View>
 
-                    <View className="mb-4">
+                    <View className="">
                         <Text>{formik.errors.categorie}</Text>
                         <TextInput
                             placeholder="Categoría "
@@ -264,4 +289,4 @@ const ManageBusinessScreen = () => {
     )
 }
 
-export default ManageBusinessScreen
+export default CreateBusinessScreen;

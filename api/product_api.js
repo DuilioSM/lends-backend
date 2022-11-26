@@ -1,8 +1,39 @@
 import ApiManager from "./ApiManager";
 
-export const order_create = async (data, token) => {
+export const product_getAll = async (token) => {
     try {
-        const result = await ApiManager("/orders", {
+
+        const result = await ApiManager(`/products?_business=637cd0f727ee10693fce1990`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+export const product_by_business = async (token, business) => {
+    try {
+        const result = await ApiManager(`/products?_business=${business}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+export const product_create = async (data, token) => {
+    try {
+        const result = await ApiManager("/products", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -16,36 +47,5 @@ export const order_create = async (data, token) => {
         return result;
     } catch (error) {
         return console.log(error);
-    }
-};
-
-export const orders_getAll = async (token, customer) => {
-    try {
-        // `/orders?customer=${customer}`
-        const result = await ApiManager(`/orders?customer=635bf9778bacf4021c9b873a`, {
-            method: "GET",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": token
-            }
-        });
-        return result;
-    } catch (error) {
-        return error.response.data;
-    }
-};
-
-export const orders_getByBusiness = async (business, token) => {
-    try {
-        const result = await ApiManager(`/orders?business=${business}`, {
-            method: "GET",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": token
-            }
-        });
-        return result;
-    } catch (error) {
-        return error.response.data;
     }
 };

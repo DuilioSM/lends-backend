@@ -18,19 +18,22 @@ import Categories from "../components/Categories";
 import FeaturedRow from "../components/FeaturedRow";
 import sanityClient from "../sanity";
 import { useSelector } from "react-redux";
-import { getToken } from "../features/authSlice";
+import { getToken, selectUserBusiness } from "../features/authSlice";
 import { selectUser } from "../features/authSlice";
 
 function HomeScreen() {
   const navigator = useNavigation();
   const [featuredCategories, setFeaturedCategories] = useState();
   const userInfo = useSelector(selectUser);
+  const userBusiness = useSelector(selectUserBusiness);
+
 
   useLayoutEffect(() => {
     navigator.setOptions({ headerShown: false });
   });
 
   useEffect(() => {
+
     sanityClient
       .fetch(
         `

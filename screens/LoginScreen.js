@@ -5,14 +5,16 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { addToken, addUserData } from "../features/authSlice";
+import { addToken, addUserBusiness, addUserData } from "../features/authSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { user_login } from "../api/user_api";
 import { useDispatch } from "react-redux";
+import { business_getById } from "../api/business_api";
 
 function initialValues() {
   return {
@@ -48,6 +50,17 @@ const LoginScreen = () => {
           if (result.status === 201) {
             dispatch(addToken(result.data.accessToken));
             dispatch(addUserData(result.data.user));
+
+            //if the user has a business this part of code is going to fetch and set the information business
+            result.data.user.business && business_getById(result.data.user.business, result.data.accessToken).then((result) => {
+              console.log(result.data.data[0])
+              dispatch(addUserBusiness(result.data.data[0]));
+            }).catch((err) => {
+              console.log(err);
+            })
+          }
+          if (result.message === 'Invalid login') {
+            Alert.alert('Credenciales incorrectas')
           }
         })
         .catch((err) => {
