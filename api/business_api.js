@@ -30,6 +30,21 @@ export const business_getById = async (business, token) => {
     }
 };
 
+export const business_getByCategory = async (category, token) => {
+    try {
+        const result = await ApiManager(`/business?category=${category}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
 export const business_create = async (data, token) => {
     try {
         const result = await ApiManager("/business", {

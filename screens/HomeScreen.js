@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -17,23 +18,21 @@ import {
 import Categories from "../components/Categories";
 import FeaturedRow from "../components/FeaturedRow";
 import sanityClient from "../sanity";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getToken, selectUserBusiness } from "../features/authSlice";
 import { selectUser } from "../features/authSlice";
+import { selectCategories, setCategories } from "../features/categoriesSlice";
 
 function HomeScreen() {
   const navigator = useNavigation();
   const [featuredCategories, setFeaturedCategories] = useState();
   const userInfo = useSelector(selectUser);
-  const userBusiness = useSelector(selectUserBusiness);
-
 
   useLayoutEffect(() => {
     navigator.setOptions({ headerShown: false });
   });
 
   useEffect(() => {
-
     sanityClient
       .fetch(
         `
@@ -52,7 +51,7 @@ function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView className="bg-white pt-5">
+    <SafeAreaView className="flex-1 bg-white pt-5">
       <View className="flex-row pb-3 items-center mx-4 space-x-2">
         <Image
           source={{
@@ -65,10 +64,13 @@ function HomeScreen() {
           <Text className="font-bold text-gray-400 text-xs">
             Hola {userInfo.fullname}
           </Text>
-          <Text className="font-bold text-xl">
-            Ubicación actual
-            <ChevronDownIcon size={20} color="#00CCBB" />
-          </Text>
+          <TouchableOpacity onPress={() => navigator.navigate("Address")}>
+            <Text className="font-bold text-xl">
+              Ubicación actual
+              <ChevronDownIcon size={20} color="#00CCBB" />
+            </Text>
+          </TouchableOpacity>
+
         </View>
         <UserIcon size={35} color="#00CCBB" onPress={() => navigator.navigate("Profile")} />
       </View>

@@ -46,7 +46,7 @@ const ManageProductsScreen = () => {
     }, []);
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate("Product", { item })} className="flex-row  rounded-md shadow-md p-2 my-1 bg-white">
+        <TouchableOpacity onPress={() => navigation.navigate("EditProduct", item)} className="flex-row  rounded-md shadow-md p-2 my-1 bg-white">
             <View className="flex-1 pr-2">
                 <Text className="text-xl mb-1">{item.name}</Text>
                 <Text className="text-gray-400">{item.short_description}</Text>

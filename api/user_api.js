@@ -54,3 +54,22 @@ export const user_add_business = async (business, user, token) => {
     return error.response.data;
   }
 };
+
+export const user_add_address = async (address, user, token) => {
+  try {
+    const result = await ApiManager(`/users?_id=${user}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": token
+      },
+      data: {
+        address,
+        strategy: "local",
+      },
+    });
+    return result;
+  } catch (error) {
+    return error.response.data;
+  }
+};

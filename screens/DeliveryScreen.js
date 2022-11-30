@@ -72,9 +72,9 @@ const DeliveryScreen = () => {
         />
         <View className="flex-1">
           <Text className="text-lg">Usuario Name</Text>
-          <Text className="text-gray-400"> COnductor</Text>
+          <Text className="text-gray-400"> Conductor</Text>
         </View>
-        <Text className="text-[#00CCBB] text-lg mr-5 font-bold">Call</Text>
+        <Text className="text-[#00CCBB] text-lg mr-5 font-bold">Llamar</Text>
       </SafeAreaView>
     </View>
   );

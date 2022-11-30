@@ -53,7 +53,6 @@ const LoginScreen = () => {
 
             //if the user has a business this part of code is going to fetch and set the information business
             result.data.user.business && business_getById(result.data.user.business, result.data.accessToken).then((result) => {
-              console.log(result.data.data[0])
               dispatch(addUserBusiness(result.data.data[0]));
             }).catch((err) => {
               console.log(err);

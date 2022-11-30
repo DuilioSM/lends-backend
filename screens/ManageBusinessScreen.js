@@ -22,7 +22,7 @@ function validationSchema() {
         long: Yup.number().required("La latitud del negocio es obligatoria"),
         direction: Yup.string().required("La dirección del negocio es obligatoria"),
         rating: Yup.number().required("El rating del negocio es obligatoria"),
-        categorie: Yup.string().required("La categoría del negocio es obligatoria")
+        category: Yup.string().required("La categoría del negocio es obligatoria")
     };
 }
 
@@ -89,23 +89,6 @@ const ManageBusinessScreen = () => {
 
     }
 
-    // const formik = useFormik({
-    //     initialValues: initialValues(),
-    //     validationSchema: Yup.object(validationSchema()),
-    //     validateOnChange: false,
-    //     onSubmit: (data) => {
-    //         business_create({ ...data, business_image, _user: userInfo._id }, token).then((result) => {
-    //             if (result.status === 201) {
-    //                 Alert.alert("El negocio ha sido actualizado")
-    //                 navigation.goBack()
-    //             }
-    //         })
-    //             .catch((err) => {
-    //                 console.log(err);
-    //             });
-    //     }
-    // });
-
     const formik = useFormik({
         initialValues: userBusiness,
         validationSchema: Yup.object(validationSchema()),
@@ -159,7 +142,7 @@ const ManageBusinessScreen = () => {
                     </TouchableOpacity>
                 </View>
                 <View className="bg-white">
-                    <TouchableOpacity onPress={() => navigation.navigate("ManageProducts")} className="flex-row  items-center space-x-2 p-4 border-y border-gray-300">
+                    <TouchableOpacity onPress={() => navigation.navigate("ManageOrders")} className="flex-row  items-center space-x-2 p-4 border-y border-gray-300">
                         <TruckIcon color="gray" opacity={0.6} size={30} />
                         <Text className="pl-2 flex-1 text-md font-bold">
                             Solicitudes de pedidos
@@ -242,11 +225,11 @@ const ManageBusinessScreen = () => {
                     </View>
 
                     <View className="mb-4">
-                        <Text>{formik.errors.categorie}</Text>
+                        <Text>{formik.errors.category}</Text>
                         <TextInput
                             placeholder="Categoría "
-                            value={formik.values.categorie}
-                            onChangeText={(text) => formik.setFieldValue("categorie", text)}
+                            value={formik.values.category}
+                            onChangeText={(text) => formik.setFieldValue("category", text)}
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
                         />
                     </View>

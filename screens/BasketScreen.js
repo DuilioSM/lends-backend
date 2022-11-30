@@ -20,7 +20,6 @@ import {
   cleanBasket
 } from "../features/basketSlice";
 import { selectBusiness } from "../features/businessSlice";
-import { urlFor } from "../sanity";
 import { getToken, selectUser } from "../features/authSlice";
 import { order_create } from "../api/order_api";
 import { payment_create } from "../api/intentPayment_api";

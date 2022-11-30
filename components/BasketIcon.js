@@ -21,7 +21,7 @@ const BasketIcon = () => {
           {items.length}
         </Text>
         <Text className="flex-1 text-white font-extrabold text-lg text-center">
-          View basket
+          Ver canasta
         </Text>
         <Text className="text-lg text-white font-extrabold">
           <Currency quantity={basketTotal} currency="MXN" />

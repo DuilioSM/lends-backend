@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import CryptoJS from 'crypto-js';
 import { ArrowLeftIcon, CameraIcon, ShoppingBagIcon } from 'react-native-heroicons/outline';
 import * as ImagePicker from 'expo-image-picker';
+import { Picker } from '@react-native-picker/picker';
+
 import { getToken } from '../features/authSlice';
 import { upload_image } from '../api/upload_api';
 import { business_create } from '../api/business_api';
@@ -12,6 +14,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { selectUser } from "../features/authSlice";
 import { user_add_business } from '../api/user_api';
+import sanityClient from "../sanity";
+import { useRef } from 'react';
 
 
 function initialValues() {
@@ -27,7 +31,7 @@ function initialValues() {
         long: null,
         direction: "",
         rating: "",
-        categorie: "",
+        category: "",
     };
 }
 function validationSchema() {
@@ -39,7 +43,7 @@ function validationSchema() {
         long: Yup.number().required("La latitud del negocio es obligatoria"),
         direction: Yup.string().required("La dirección del negocio es obligatoria"),
         rating: Yup.number().required("El rating del negocio es obligatoria"),
-        categorie: Yup.string().required("La categoría del negocio es obligatoria")
+        category: Yup.string().required("La categoría del negocio es obligatoria")
     };
 }
 
@@ -52,6 +56,19 @@ const CreateBusinessScreen = () => {
     const [galleryPermission, setGalleryPermission] = useState(null);
     const [image, setImage] = useState(null);
     const token = useSelector(getToken);
+    const [featuredCategories, setFeaturedCategories] = useState();
+    const [selectedCategory, setSelectedCategory] = useState();
+
+    const pickerRef = useRef();
+
+    function open() {
+        pickerRef.current.focus();
+    }
+
+    function close() {
+        pickerRef.current.blur();
+    }
+
 
     const navigation = useNavigation();
 
@@ -105,23 +122,6 @@ const CreateBusinessScreen = () => {
 
     }
 
-    // const formik = useFormik({
-    //     initialValues: initialValues(),
-    //     validationSchema: Yup.object(validationSchema()),
-    //     validateOnChange: false,
-    //     onSubmit: (data) => {
-    //         business_create({ ...data, business_image, _user: userInfo._id }, token).then((result) => {
-    //             if (result.status === 201) {
-    //                 Alert.alert("El negocio ha sido actualizado")
-    //                 navigation.goBack()
-    //             }
-    //         })
-    //             .catch((err) => {
-    //                 console.log(err);
-    //             });
-    //     }
-    // });
-
     const formik = useFormik({
         initialValues: initialValues(),
         validationSchema: Yup.object(validationSchema()),
@@ -141,8 +141,6 @@ const CreateBusinessScreen = () => {
                                 Alert.alert(err)
                                 console.log(err);
                             });
-                        // Alert.alert("El negocio ha sido actualizado")
-                        // navigation.goBack()
                     }
                 })
                 .catch((err) => {
@@ -150,6 +148,24 @@ const CreateBusinessScreen = () => {
                 });
         }
     });
+
+    useEffect(() => {
+        sanityClient
+            .fetch(
+                `
+        *[_type == "featured"]{
+          ...,
+          business[]->{
+            ...,
+            articles[]->,
+          }
+        }
+        `
+            )
+            .then((data) => {
+                setFeaturedCategories(data);
+            });
+    }, []);
 
     return (
         <>
@@ -233,20 +249,6 @@ const CreateBusinessScreen = () => {
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]"
                         />
                     </View>
-                    {/* <View className=" flex-row space-x-2 mx-2 items-center">
-
-                        <View>
-                            <Text>{formik.errors.long}</Text>
-                            <TextInput
-                                placeholder="Longitud del negocio"
-                                value={formik.values.long}
-                                keyboardType="decimal-pad"
-                                onChangeText={(text) => formik.setFieldValue("long", text)}
-                                className="py-2 px-4  border-b-2 border-[#00CCBB]  "
-                            />
-                        </View>
-                        <QuestionMarkCircleIcon color="gray" opacity={0.6} size={30} />
-                    </View> */}
                     <View className="">
                         <Text>{formik.errors.direction}</Text>
                         <TextInput
@@ -266,20 +268,30 @@ const CreateBusinessScreen = () => {
                         />
                     </View>
 
-                    <View className="">
-                        <Text>{formik.errors.categorie}</Text>
+                    <View className="mb-5">
+                        <Text>{formik.errors.category}</Text>
                         <TextInput
-                            placeholder="Categoría "
-                            value={formik.values.categorie}
-                            onChangeText={(text) => formik.setFieldValue("categorie", text)}
+                            placeholder="Añade tu categoría"
+                            value={formik.values.category}
+                            onChangeText={(text) => formik.setFieldValue("category", text)}
                             className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
                         />
+                        {/* <Picker style={{ height: 6 }}
+                            ref={pickerRef}
+                            selectedValue={selectedCategory}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedCategory(itemValue)
+                            }>
+                            <Picker.Item label="Java" value="java" />
+                            <Picker.Item label="JavaScript" value="js" />
+                        </Picker> */}
+
                     </View>
                     <TouchableOpacity
                         onPress={formik.handleSubmit}
                         className="py-2 px-8 bg-[#00CCBB]  rounded-full"
                     >
-                        <Text className="text-white text-base text-center">Guardar</Text>
+                        <Text className="text-white text-base  text-center">Guardar</Text>
                     </TouchableOpacity>
 
                 </View>

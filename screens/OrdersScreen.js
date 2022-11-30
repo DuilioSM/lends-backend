@@ -24,7 +24,7 @@ const OrdersScreen = () => {
 
 
     useEffect(() => {
-        orders_getAll(token, userInfo._id)
+        orders_getAll(userInfo._id, token)
             .then((result) => {
                 if (result.status === 200) {
                     setOrders(result.data.data)
@@ -35,15 +35,23 @@ const OrdersScreen = () => {
             });
     }, [])
     const renderItem = ({ item }) => (
-        <View className="flex-row justify-between items-end bg-white m-2 rounded-lg shadow-lg p-4">
-            <View>
+        <View className=" bg-white m-2 rounded-lg shadow-lg p-4">
+            <View >
                 <View>
                     <Text className="text-lg text-[#00CCBB] font-bold">{item.businessTitle}</Text>
+                    <Text className="text-lg font-bold">Order: {item._id}</Text>
+
                     <Text className="text-lg ">{format(new Date(item.createdAt), "hh:mm dd MMMM yy")}</Text>
                 </View>
                 <Text className="text-lg font-bold">$ {item.total}</Text>
+
             </View>
-            {/* <Text className="text-lg font-bold">$ {item.businessTitle}</Text> */}
+            {
+                item.status === "Aceptado" && <Text className="text-green-500 text-lg font-bold self-end">{item.status}</Text>
+            }
+            {
+                item.status === "Rechazado" && <Text className="text-red-500 text-lg font-bold self-end">{item.status}</Text>
+            }
         </View>
 
     );
@@ -51,7 +59,7 @@ const OrdersScreen = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-100 justify-between">
-            <View className="flex-2 bg-gray-100">
+            <View className="flex-1 bg-gray-100">
                 <View className="p-5 border-b border-[#00CCBB] bg-white shadow-xs">
                     <View>
                         <Text className="text-lg font-bold text-center">Pedidos</Text>
@@ -69,18 +77,6 @@ const OrdersScreen = () => {
                     renderItem={renderItem}
                     keyExtractor={item => item._id}
                 />
-                {/* {orders &&
-                    orders.map((order) => (
-                        <Text key={order._id} className="flex-1 text-lg font-semibold">{order.total}</Text>
-                    ))
-                } */}
-
-                {/* <View className="flex-row items-center space-x-4 px-4 py-3 bg-white my-1">                */}
-
-                {/* <AtSymbolIcon size={35} color="#00CCBB" /> */}
-                {/* <Text className="flex-1 text-lg ">{userInfo.email}</Text> */}
-                {/* </View> */}
-
             </View>
         </SafeAreaView>
     )

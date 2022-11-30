@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
-import { business_getAll } from "../api/business_api"
+import { business_getAll, business_getByCategory } from "../api/business_api"
 import { getToken } from "../features/authSlice";
 import BusinessCard from "./BusinessCard";
 import sanityClient from "../sanity";
@@ -13,26 +13,10 @@ const FeaturedRow = ({ id, title, description }) => {
 
 
   useEffect(() => {
-    // sanityClient
-    //   .fetch(
-    //     `
-    // *[_type == "featured" && _id == $id]{
-    //   ...,
-    //   business[]->{
-    //     ...,
-    //     articles[]->,
-    //     type{
-    //       name
-    //     }
-    //   }
-    // }[0]
-    // `,
-    //     { id }
-    //   )
-    //   .then((data) => setBusiness(data?.business));
-    business_getAll(token)
+    business_getByCategory(title, token)
       .then((result) => {
         if (result.status === 200) {
+          console.log(result.data)
           setBusiness(result.data.data)
         }
       })

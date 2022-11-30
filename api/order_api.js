@@ -19,10 +19,10 @@ export const order_create = async (data, token) => {
     }
 };
 
-export const orders_getAll = async (token, customer) => {
+export const orders_getAll = async (customer, token) => {
     try {
         // `/orders?customer=${customer}`
-        const result = await ApiManager(`/orders?customer=635bf9778bacf4021c9b873a`, {
+        const result = await ApiManager(`/orders?customer=${customer}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -43,6 +43,25 @@ export const orders_getByBusiness = async (business, token) => {
                 "content-type": "application/json",
                 "Authorization": token
             }
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+export const order_updateStatus = async (status, order, token) => {
+    try {
+        const result = await ApiManager(`/orders?_id=${order}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            },
+            data: {
+                status,
+                strategy: "local",
+            },
         });
         return result;
     } catch (error) {

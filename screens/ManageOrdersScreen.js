@@ -1,42 +1,26 @@
-import { View, Text, SafeAreaView, Image, FlatList, TouchableOpacity, RefreshControl } from 'react-native'
+import { View, Text, SafeAreaView, Image, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native'
 import { useState, useEffect } from 'react';
-import { product_by_business } from '../api/product_api';
 import { getToken, selectUser } from '../features/authSlice';
 import { useSelector } from 'react-redux';
 import Currency from "react-currency-formatter";
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { orders_getByBusiness, order_updateStatus } from '../api/order_api';
 
 
 const ManageOrdersScreen = () => {
-    const [products, setProducts] = useState([]);
+    const [orders, setOrders] = useState([]);
     const token = useSelector(getToken);
     const userInfo = useSelector(selectUser);
     const navigation = useNavigation();
-
-    useEffect(() => {
-        product_by_business(token, userInfo.business)
-            .then((result) => {
-                if (result.status === 200) {
-                    setProducts(result.data.data)
-                    console.log(result.data.data)
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, [])
-
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true)
-        // console.log(userInfo.business)
-        product_by_business(token, userInfo.business)
+        orders_getByBusiness(userInfo.business, token)
             .then((result) => {
                 if (result.status === 200) {
-                    setProducts(result.data.data)
-                    console.log(result.data.data)
+                    setOrders(result.data.data)
                 }
             })
             .catch((err) => {
@@ -45,52 +29,98 @@ const ManageOrdersScreen = () => {
         setRefreshing(false)
     }, []);
 
-    const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate("Product", { item })} className="flex-row  rounded-md shadow-md p-2 my-1 bg-white">
-            <View className="flex-1 pr-2">
-                <Text className="text-xl mb-1">{item.name}</Text>
-                <Text className="text-gray-400">{item.short_description}</Text>
-                <Text className="text-gray-400 mt-1">Stock: {item.quantity}</Text>
-                <Text className="text-gray-400 mt-2">
-                    <Currency currency="MXN" quantity={item.rental_price} />
-                </Text>
+    const handleAccept = (order) => {
+        order_updateStatus('Aceptado', order, token)
+            .then((result) => {
+                if (result.status === 200) {
+                    Alert.alert("El pedido ha sido aceptado")
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    const handleDeclined = (order) => {
+        order_updateStatus('Rechazado', order, token)
+            .then((result) => {
+                if (result.status === 200) {
+                    Alert.alert("El pedido ha sido rechazado")
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    useEffect(() => {
+        orders_getByBusiness(userInfo.business, token)
+            .then((result) => {
+                if (result.status === 200) {
+                    setOrders(result.data.data)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [])
+
+    const renderItem = ({ item }) => {
+        const itemArray = Object.entries(item.items)
+        console.log(itemArray)
+
+        return (
+            <View onPress={() => navigation.navigate("")} className="flex rounded-md shadow-md p-4 my-1 mx-2 bg-white" >
+                <Text className="text-lg font-bol ">Orden: {item._id}</Text>
+
+                {
+                    itemArray.map((item) => (
+                        <View className="flex-row my-2  space-x-2">
+                            <Text className="text-[#00CCBB] text-lg font-semibold">{item[1].length} x</Text>
+                            <Text className="flex-1 text-lg font-semibold">{item[1][0].name}</Text>
+                            <Text className="text-lg  ">
+                                <Currency quantity={item[1][0].rental_price} currency="MXN" />
+                            </Text>
+                        </View>
+                    ))
+                }
+                {
+                    item.status === "Aceptado" && <Text className="text-green-500 text-lg font-bold self-end">{item.status}</Text>
+                }
+                {
+                    item.status === "Rechazado" && <Text className="text-red-500 text-lg font-bold self-end">{item.status}</Text>
+                }
+                <View className="flex-row mt-2 justify-end space-x-2">
+                    <TouchableOpacity onPress={() => handleAccept(item._id)} className="bg-green-600 rounded-full">
+                        <Text className="flex-1 text-lg font-semibold text-white px-3 py-1">Aceptar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDeclined(item._id)} className="bg-red-600 rounded-full">
+                        <Text className="flex-1 text-lg font-semibold text-white px-3 py-1">Rechazar</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View className="">
-                <Image
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "#F3F3F4",
-                    }}
-                    source={{ uri: item.product_image.url }}
-                    className="h-24 w-24 bg-gray-300 p-4 "
-                />
-            </View>
-        </TouchableOpacity>
-    );
+
+        );
+    };
 
     return (
         <SafeAreaView className="flex-1 m-2 space-y-2">
+            {
+                orders ?
+                    <FlatList
+                        data={orders}
+                        renderItem={renderItem}
+                        keyExtractor={order => order._id}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
 
-            <FlatList
-                data={products}
-                renderItem={renderItem}
-                keyExtractor={item => item._id}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-
-            />
-            <TouchableOpacity
-                onPress={() => navigation.navigate("Product")}
-                className="rounded-lg bg-[#00CCBB] p-4"
-            >
-                <Text className="text-center text-white text-lg font-bold">
-                    Crear nuevo
-                </Text>
-            </TouchableOpacity>
+                    /> :
+                    <Text>No hay solicitudes aún</Text>
+            }
         </SafeAreaView>
     )
 }

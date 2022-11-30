@@ -49,3 +49,22 @@ export const product_create = async (data, token) => {
         return console.log(error);
     }
 };
+
+export const product_update = async (data, product, token) => {
+    try {
+        const result = await ApiManager(`/products?_id=${product}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": token
+            },
+            data: {
+                ...data,
+                strategy: "local",
+            },
+        });
+        return result;
+    } catch (error) {
+        return error.response.data;
+    }
+};
