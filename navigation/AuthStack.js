@@ -9,6 +9,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import OrdersScreen from "../screens/OrdersScreen";
 import ManageBusinessScreen from "../screens/ManageBusinessScreen";
 import ManageProductsScreen from "../screens/ManageProductsScreen";
+import ManageLocationScreen from "../screens/ManageLocationScreen";
 import ProductScreen from "../screens/ProductScreen";
 import CreateBusinessScreen from "../screens/CreateBusinessScreen";
 import ManageOrdersScreen from "../screens/ManageOrdersScreen";
@@ -71,13 +72,18 @@ const AuthStack = () => {
         name="ManageProducts"
         component={ManageProductsScreen}
         options={{ title: "Mi catálogo", headerBackTitle: "Volver" }}
-      // options={{ headerShown: false }}
+        // options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ManageOrders"
         component={ManageOrdersScreen}
         options={{ title: "Solicitudes de ordenes", headerBackTitle: "Volver" }}
-      // options={{ headerShown: false }}
+        // options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ManageLocation"
+        component={ManageLocationScreen}
+        options={{ presentation: "modal", title: "Administrar ubicación" }}
       />
       <Stack.Screen
         name="Product"

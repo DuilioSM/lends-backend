@@ -3,7 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userToken: null,
   userData: {},
-  userBusiness: {}
+  userBusiness: {
+    location: {
+      lat: null,
+      long: null,
+    },
+    formatted_address: null,
+    rating: null,
+  },
 };
 
 export const authSlice = createSlice({
@@ -19,14 +26,25 @@ export const authSlice = createSlice({
     addUserBusiness: (state, action) => {
       state.userBusiness = action.payload;
     },
+    updateUserBusiness: (state, action) => {
+      state.userBusiness = { ...state.userBusiness, ...action.payload };
+    },
     removeToken: (state) => {
       state.userToken = null;
+      state.userData = {};
+      state.userBusiness = {};
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToken, removeToken, addUserData, addUserBusiness } = authSlice.actions;
+export const {
+  addToken,
+  removeToken,
+  addUserData,
+  addUserBusiness,
+  updateUserBusiness,
+} = authSlice.actions;
 
 export const getToken = (state) => state.auth.userToken;
 export const selectUser = (state) => state.auth.userData;

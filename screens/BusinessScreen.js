@@ -20,7 +20,7 @@ import { getToken } from "../features/authSlice";
 const BusinessScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [articles, setArticles] = useState([])
+  const [articles, setArticles] = useState([]);
   const token = useSelector(getToken);
 
   const {
@@ -32,7 +32,6 @@ const BusinessScreen = () => {
       genre,
       address,
       short_description,
-      // articles,
       long,
       lat,
     },
@@ -56,18 +55,18 @@ const BusinessScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log(id)
+    console.log(id);
     product_by_business(token, id)
       .then((result) => {
         if (result.status === 200) {
-          setArticles(result.data.data)
-          console.log(result.data.data)
+          setArticles(result.data.data);
+          console.log(result.data.data);
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [])
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({

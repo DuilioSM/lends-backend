@@ -17,7 +17,7 @@ import {
   selectBasketItems,
   removeFromBasket,
   selectBasketTotal,
-  cleanBasket
+  cleanBasket,
 } from "../features/basketSlice";
 import { selectBusiness } from "../features/businessSlice";
 import { getToken, selectUser } from "../features/authSlice";
@@ -25,59 +25,65 @@ import { order_create } from "../api/order_api";
 import { payment_create } from "../api/intentPayment_api";
 
 const BasketScreen = () => {
-  const [cardDetails, setCardDetails] = useState()
-  const [key, setKey] = useState()
+  const [cardDetails, setCardDetails] = useState();
+  const [key, setKey] = useState();
   const [groupItemsInBasket, setgroupItemsInBasket] = useState([]);
 
-  const { confirmPayment, loading } = useConfirmPayment()
+  const { confirmPayment, loading } = useConfirmPayment();
   const navigation = useNavigation();
   const userInfo = useSelector(selectUser);
   const business = useSelector(selectBusiness);
   const items = useSelector(selectBasketItems);
   const basketTotal = useSelector(selectBasketTotal);
-  const token = useSelector(getToken)
+  const token = useSelector(getToken);
   const dispatch = useDispatch();
 
   const fetchIntentPayment = async () => {
-    payment_create({
-      amount: (basketTotal + 60) * 100,
-      currency: "mxn"
-    }, token)
-      .then(result => {
+    payment_create(
+      {
+        amount: (basketTotal + 60) * 100,
+        currency: "mxn",
+      },
+      token
+    )
+      .then((result) => {
         if (result.status == 201) {
           setKey(result.data);
         }
-      }).catch(err => {
-        console.log(err)
       })
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleOrder = async () => {
     if (!cardDetails?.complete) {
       Alert.alert("Por favor introduce los detalles de pago");
-      return
+      return;
     }
     await fetchIntentPayment();
     const { error } = await confirmPayment(key, {
-      paymentMethodType: 'Card',
+      paymentMethodType: "Card",
       paymentMethodData: {
-        email: userInfo.email
-      }
-
+        email: userInfo.email,
+      },
     });
 
     if (error) {
-      Alert.alert('Error', error.localizedMessage);
-      console.log(error)
+      Alert.alert("Error", error.localizedMessage);
+      console.log(error);
     } else {
-      order_create({
-        customer: userInfo._id,
-        business: business.id,
-        businessTitle: business.title,
-        items: groupItemsInBasket,
-        total: basketTotal + 60,
-        stripeId: key
-      }, token)
+      order_create(
+        {
+          customer: userInfo._id,
+          business: business.id,
+          businessTitle: business.title,
+          items: groupItemsInBasket,
+          total: basketTotal + 60,
+          stripeId: key,
+        },
+        token
+      )
         .then((result) => {
           if (result.status === 201) {
             navigation.navigate("PreparingOrder");
@@ -86,24 +92,9 @@ const BasketScreen = () => {
         .catch((err) => {
           console.log(err);
         });
-      dispatch(cleanBasket())
+      dispatch(cleanBasket());
     }
-
-    // order_create({
-    //   customer: userInfo._id,
-    //   business: business.id,
-    //   items: groupItemsInBasket,
-    //   total: basketTotal + 60,
-    // }, token)
-    //   .then((result) => {
-    //     if (result.status === 201) {
-    //       navigation.navigate("PreparingOrder");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-  }
+  };
 
   useEffect(() => {
     const groupedItems = items.reduce((results, item) => {
@@ -187,7 +178,11 @@ const BasketScreen = () => {
           </Text>
         </View>
         <View className="flex-row justify-between px-4 py-3 bg-white rounded-lg">
-          <CardField onCardChange={cardDetails => setCardDetails(cardDetails)} postalCodeEnabled={false} style={{ height: 40, width: '100%' }} />
+          <CardField
+            onCardChange={(cardDetails) => setCardDetails(cardDetails)}
+            postalCodeEnabled={false}
+            style={{ height: 40, width: "100%" }}
+          />
         </View>
         <TouchableOpacity
           onPress={() => handleOrder()}
@@ -202,6 +197,5 @@ const BasketScreen = () => {
     </SafeAreaView>
   );
 };
-
 
 export default BasketScreen;

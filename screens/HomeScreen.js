@@ -22,33 +22,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { getToken, selectUserBusiness } from "../features/authSlice";
 import { selectUser } from "../features/authSlice";
 import { selectCategories, setCategories } from "../features/categoriesSlice";
+import {
+  useGetBusinessQuery,
+  useLazyGetBusinessQuery,
+} from "../services/businessApi";
+import {
+  useGetCategoriesQuery,
+  useLazyGetCategoriesQuery,
+} from "../services/categoriesApi";
 
 function HomeScreen() {
+  const userInfo = useSelector(selectUser);
   const navigator = useNavigation();
   const [featuredCategories, setFeaturedCategories] = useState();
-  const userInfo = useSelector(selectUser);
+  const { data, error, loading, refetch } = useGetCategoriesQuery();
 
   useLayoutEffect(() => {
     navigator.setOptions({ headerShown: false });
   });
 
   useEffect(() => {
-    sanityClient
-      .fetch(
-        `
-    *[_type == "featured"]{
-      ...,
-      business[]->{
-        ...,
-        articles[]->,
-      }
-    }
-    `
-      )
-      .then((data) => {
-        setFeaturedCategories(data);
-      });
-  }, []);
+    data && setFeaturedCategories(data.data);
+  }, [data]);
 
   return (
     <SafeAreaView className="flex-1 bg-white pt-5">
@@ -70,9 +65,12 @@ function HomeScreen() {
               <ChevronDownIcon size={20} color="#00CCBB" />
             </Text>
           </TouchableOpacity>
-
         </View>
-        <UserIcon size={35} color="#00CCBB" onPress={() => navigator.navigate("Profile")} />
+        <UserIcon
+          size={35}
+          color="#00CCBB"
+          onPress={() => navigator.navigate("Profile")}
+        />
       </View>
 
       {/* Search */}
@@ -92,7 +90,7 @@ function HomeScreen() {
             key={category._id}
             id={category._id}
             title={category.name}
-            description={category.short_description}
+            description={category.description}
           />
         ))}
       </ScrollView>

@@ -8,13 +8,14 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectBusiness } from "../features/businessSlice";
-import { XCircleIcon } from "react-native-heroicons/solid";
+import { StarIcon, XCircleIcon } from "react-native-heroicons/solid";
 import * as Progress from "react-native-progress";
 import MapView, { Marker } from "react-native-maps";
 
 const DeliveryScreen = () => {
   const navigation = useNavigation();
   const business = useSelector(selectBusiness);
+  console.log(business);
 
   return (
     <View className="bg-[#00CCBB] flex-1 ">
@@ -66,13 +67,18 @@ const DeliveryScreen = () => {
       <SafeAreaView className="bg-white flex-row items-center space-x-5 h-28">
         <Image
           source={{
-            uri: "https://links.papareact.com/wru",
+            // uri: "https://links.papareact.com/wru",
+            uri: business.imgUrl,
           }}
           className="h-12 w-12 bg-gray-300 p-4 rounded-full ml-5"
         />
         <View className="flex-1">
-          <Text className="text-lg">Usuario Name</Text>
-          <Text className="text-gray-400"> Conductor</Text>
+          <Text className="text-lg">{business.title}</Text>
+          <View className="flex flex-row items-center	">
+            <StarIcon color="green" opacity={0.5} size={22} />
+
+            <Text className="text-gray-400 border-2"> {business.rating}</Text>
+          </View>
         </View>
         <Text className="text-[#00CCBB] text-lg mr-5 font-bold">Llamar</Text>
       </SafeAreaView>

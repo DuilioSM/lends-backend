@@ -50,6 +50,7 @@ const RegisterScreen = () => {
         password: data.password,
       })
         .then((result) => {
+          console.log(result);
           if (result.status === 201) {
             Alert.alert(
               "Usuario creado correctamente",
