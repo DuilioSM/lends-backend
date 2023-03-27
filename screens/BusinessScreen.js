@@ -106,7 +106,10 @@ const BusinessScreen = () => {
               <View className="flex-row items-center space-x-1">
                 <MapPinIcon color="gray" opacity={0.4} size={22} />
                 <Text className="text-xs text-gray-500">
-                  Cerca • {address}{" "}
+                  Cerca •{" "}
+                  {address.length > 28
+                    ? address.substring(0, 32) + "..."
+                    : address}
                 </Text>
               </View>
             </View>

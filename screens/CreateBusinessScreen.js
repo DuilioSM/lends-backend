@@ -19,7 +19,6 @@ import {
   ShoppingBagIcon,
 } from "react-native-heroicons/outline";
 import * as ImagePicker from "expo-image-picker";
-import { Picker } from "@react-native-picker/picker";
 
 import { getToken, selectUserBusiness } from "../features/authSlice";
 import { upload_image } from "../api/upload_api";
@@ -28,8 +27,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { selectUser } from "../features/authSlice";
 import { user_add_business } from "../api/user_api";
-import sanityClient from "../sanity";
-import { useRef } from "react";
 
 function initialValues() {
   return {
@@ -40,10 +37,6 @@ function initialValues() {
       id: "",
       url: "",
     },
-    // lat: null,
-    // long: null,
-    // direction: "",
-    // rating: "",
     category: "",
   };
 }
@@ -54,10 +47,6 @@ function validationSchema() {
       "La descripción del negocio es obligatorio"
     ),
     business_image: Yup.object().required("La foto del negocio es obligatoria"),
-    // lat: Yup.number().required("La latitud del negocio es obligatoria"),
-    // long: Yup.number().required("La latitud del negocio es obligatoria"),
-    // direction: Yup.string().required("La dirección del negocio es obligatoria"),
-    // rating: Yup.number().required("El rating del negocio es obligatoria"),
     category: Yup.string().required("La categoría del negocio es obligatoria"),
   };
 }
@@ -70,10 +59,11 @@ const CreateBusinessScreen = () => {
   const userInfo = useSelector(selectUser);
   const userBusiness = useSelector(selectUserBusiness);
   const [galleryPermission, setGalleryPermission] = useState(null);
+  const [featuredCategories, setFeaturedCategories] = useState();
+
   const [image, setImage] = useState(null);
   const token = useSelector(getToken);
-  // const [featuredCategories, setFeaturedCategories] = useState();
-  // const [selectedCategory, setSelectedCategory] = useState();
+  const { data, error, loading, refetch } = useGetCategoriesQuery();
 
   const navigation = useNavigation();
 
@@ -84,6 +74,10 @@ const CreateBusinessScreen = () => {
       setGalleryPermission(galleryStatus.status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    data && setFeaturedCategories(data.data);
+  }, [data]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -238,46 +232,6 @@ const CreateBusinessScreen = () => {
               className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
             />
           </View>
-          {/* <View>
-            <Text>{formik.errors.lat}</Text>
-            <TextInput
-              placeholder="Latitud del negocio"
-              value={formik.values.lat}
-              keyboardType="decimal-pad"
-              onChangeText={(text) => formik.setFieldValue("lat", text)}
-              className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
-            />
-          </View>
-
-          <View>
-            <Text>{formik.errors.long}</Text>
-            <TextInput
-              placeholder="Longitud del negocio"
-              value={formik.values.long}
-              keyboardType="decimal-pad"
-              onChangeText={(text) => formik.setFieldValue("long", text)}
-              className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]"
-            />
-          </View>
-          <View className="">
-            <Text>{formik.errors.direction}</Text>
-            <TextInput
-              placeholder="Dirección"
-              value={formik.values.direction}
-              onChangeText={(text) => formik.setFieldValue("direction", text)}
-              className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
-            />
-          </View>
-          <View className="">
-            <Text>{formik.errors.rating}</Text>
-            <TextInput
-              placeholder="Rating de google Maps"
-              value={formik.values.rating}
-              onChangeText={(text) => formik.setFieldValue("rating", text)}
-              className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
-            />
-          </View> */}
-
           <View className="mb-5">
             <Text>{formik.errors.category}</Text>
             <TextInput
@@ -287,6 +241,35 @@ const CreateBusinessScreen = () => {
               className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
             />
           </View>
+
+          <View className="mb-5">
+            {/* apenas copie y pegue esto */}
+            <Dropdown
+              data={data}
+              search
+              maxHeight={300}
+              labelField="name"
+              valueField="name"
+              placeholder={!isFocus ? "Select item" : "..."}
+              searchPlaceholder="Search..."
+              value={value}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={(item) => {
+                setValue(item.value);
+                setIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={styles.icon}
+                  color={isFocus ? "blue" : "black"}
+                  name="Safety"
+                  size={20}
+                />
+              )}
+            />
+          </View>
+
           <TouchableOpacity
             onPress={() => formik.handleSubmit()}
             className="py-2 px-8 bg-[#00CCBB]  rounded-full mb-5"

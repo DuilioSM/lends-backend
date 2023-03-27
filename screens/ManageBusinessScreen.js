@@ -16,15 +16,17 @@ import {
   CameraIcon,
   MapPinIcon,
   ShoppingBagIcon,
+  TagIcon,
   TruckIcon,
 } from "react-native-heroicons/outline";
 import * as ImagePicker from "expo-image-picker";
-import { getToken, selectUserBusiness } from "../features/authSlice";
-import { upload_image } from "../api/upload_api";
-import { business_update } from "../api/business_api";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { selectUser } from "../features/authSlice";
+import { getToken, selectUserBusiness } from "../features/authSlice";
+import { upload_image } from "../api/upload_api";
+import { business_update } from "../api/business_api";
+import DropdownComponent from "../components/Dropdown";
 
 function validationSchema() {
   return {
@@ -33,10 +35,6 @@ function validationSchema() {
       "La descripción del negocio es obligatorio"
     ),
     business_image: Yup.object().required("La foto del negocio es obligatoria"),
-    // lat: Yup.number().required("La latitud del negocio es obligatoria"),
-    // long: Yup.number().required("La latitud del negocio es obligatoria"),
-    // direction: Yup.string().required("La dirección del negocio es obligatoria"),
-    // rating: Yup.number().required("El rating del negocio es obligatoria"),
     category: Yup.string().required("La categoría del negocio es obligatoria"),
   };
 }
@@ -109,6 +107,8 @@ const ManageBusinessScreen = () => {
     validationSchema: Yup.object(validationSchema()),
     validateOnChange: false,
     onSubmit: (data) => {
+      // console.log()
+      //recuerda quitar el estado en redux de la categoría
       business_update(
         { ...data, ...userBusiness, business_image },
         userBusiness._id,
@@ -185,6 +185,12 @@ const ManageBusinessScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <View className="bg-white">
+          <View className="flex-row  items-center  space-x-2 px-4 border-y border-gray-300">
+            <TagIcon color="gray" opacity={0.6} size={30} />
+            <DropdownComponent />
+          </View>
+        </View>
 
         <View className=" mx-4 mb-20 space-y-2">
           <View className="">
@@ -207,7 +213,7 @@ const ManageBusinessScreen = () => {
               className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
             />
           </View>
-          <View className="mb-4">
+          {/* <View className="mb-4">
             <Text>{formik.errors.category}</Text>
             <TextInput
               placeholder="Categoría "
@@ -215,7 +221,7 @@ const ManageBusinessScreen = () => {
               onChangeText={(text) => formik.setFieldValue("category", text)}
               className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
             />
-          </View>
+          </View> */}
         </View>
       </ScrollView>
       <TouchableOpacity

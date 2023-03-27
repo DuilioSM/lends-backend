@@ -5,6 +5,8 @@ import businessReducer from "./features/businessSlice";
 import authReducer from "./features/authSlice";
 import ordersReducer from "./features/ordersSlice";
 import categoriesReducer from "./features/categoriesSlice";
+import userSelectedReducer from "./features/userSelectedSlice";
+
 import { businessApi } from "./services/businessApi";
 import { categoriesApi } from "./services/categoriesApi";
 
@@ -17,6 +19,7 @@ export const store = configureStore({
     auth: authReducer,
     orders: ordersReducer,
     categories: categoriesReducer,
+    userSelected: userSelectedReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(

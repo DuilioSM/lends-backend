@@ -33,6 +33,7 @@ import {
 
 function HomeScreen() {
   const userInfo = useSelector(selectUser);
+
   const navigator = useNavigation();
   const [featuredCategories, setFeaturedCategories] = useState();
   const { data, error, loading, refetch } = useGetCategoriesQuery();

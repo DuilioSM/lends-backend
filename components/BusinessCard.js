@@ -37,7 +37,7 @@ const BusinessCard = ({
     >
       <Image
         source={{
-          uri: imgUrl
+          uri: imgUrl,
         }}
         className="h-36 w-64 rounded-sm"
       />
@@ -51,7 +51,10 @@ const BusinessCard = ({
         </View>
         <View className="flex-row items-center space-x-1">
           <MapPinIcon color="gray" opacity={0.4} size={22} />
-          <Text className="text-xs text-gray-500">Cerca • {address}</Text>
+          <Text className="text-xs text-gray-500">
+            Cerca •{" "}
+            {address.length > 28 ? address.substring(0, 23) + "..." : address}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
