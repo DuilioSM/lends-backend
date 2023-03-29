@@ -107,10 +107,9 @@ const ManageBusinessScreen = () => {
     validationSchema: Yup.object(validationSchema()),
     validateOnChange: false,
     onSubmit: (data) => {
-      // console.log()
       //recuerda quitar el estado en redux de la categoría
       business_update(
-        { ...data, ...userBusiness, business_image },
+        { ...userBusiness, ...data, business_image },
         userBusiness._id,
         token
       )
@@ -188,7 +187,10 @@ const ManageBusinessScreen = () => {
         <View className="bg-white">
           <View className="flex-row  items-center  space-x-2 px-4 border-y border-gray-300">
             <TagIcon color="gray" opacity={0.6} size={30} />
-            <DropdownComponent />
+            <DropdownComponent
+              valueDropDown={formik.values.category}
+              onChangeBusiness={formik.setFieldValue}
+            />
           </View>
         </View>
 

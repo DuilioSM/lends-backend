@@ -17,6 +17,7 @@ import {
   CameraIcon,
   MapPinIcon,
   ShoppingBagIcon,
+  TagIcon,
 } from "react-native-heroicons/outline";
 import * as ImagePicker from "expo-image-picker";
 
@@ -27,6 +28,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { selectUser } from "../features/authSlice";
 import { user_add_business } from "../api/user_api";
+import { useGetCategoriesQuery } from "../services/categoriesApi";
+import DropdownComponent from "../components/Dropdown";
 
 function initialValues() {
   return {
@@ -209,6 +212,15 @@ const CreateBusinessScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <View className="bg-white">
+          <View className="flex-row  items-center  space-x-2 px-4 border-y border-gray-300">
+            <TagIcon color="gray" opacity={0.6} size={30} />
+            <DropdownComponent
+              valueDropDown={formik.values.category}
+              onChangeBusiness={formik.setFieldValue}
+            />
+          </View>
+        </View>
 
         <View className=" mx-4 space-y-2">
           <View className="">
@@ -230,43 +242,6 @@ const CreateBusinessScreen = () => {
                 formik.setFieldValue("short_description", text)
               }
               className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
-            />
-          </View>
-          <View className="mb-5">
-            <Text>{formik.errors.category}</Text>
-            <TextInput
-              placeholder="Añade tu categoría"
-              value={formik.values.category}
-              onChangeText={(text) => formik.setFieldValue("category", text)}
-              className="py-2 px-4 mx-2 border-b-2 border-[#00CCBB]  "
-            />
-          </View>
-
-          <View className="mb-5">
-            {/* apenas copie y pegue esto */}
-            <Dropdown
-              data={data}
-              search
-              maxHeight={300}
-              labelField="name"
-              valueField="name"
-              placeholder={!isFocus ? "Select item" : "..."}
-              searchPlaceholder="Search..."
-              value={value}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={(item) => {
-                setValue(item.value);
-                setIsFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <AntDesign
-                  style={styles.icon}
-                  color={isFocus ? "blue" : "black"}
-                  name="Safety"
-                  size={20}
-                />
-              )}
             />
           </View>
 

@@ -3,10 +3,10 @@ import { StyleSheet, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useGetCategoriesQuery } from "../services/categoriesApi";
 
-const DropdownComponent = () => {
-  const [value, setValue] = useState(null);
+const DropdownComponent = ({ valueDropDown, onChangeBusiness }) => {
+  // const [value, setValue] = useState(null);
   const { data, error, loading, refetch } = useGetCategoriesQuery();
-
+  console.log("value:", valueDropDown);
   return (
     <View style={styles.container}>
       <Dropdown
@@ -22,9 +22,9 @@ const DropdownComponent = () => {
         valueField="name"
         placeholder="Categoría"
         searchPlaceholder="Buscar..."
-        value={value}
+        value={valueDropDown}
         onChange={(item) => {
-          setValue(item.value);
+          onChangeBusiness("category", item.name);
         }}
       />
     </View>
